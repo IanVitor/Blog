@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
+using System.IO;
 using Blog.Models;
 using Blog.Repository.Interfaces;
 using Blog.ViewModel;
@@ -14,11 +14,17 @@ namespace Blog.Controllers
   {
     private readonly ILogger<AdminController> _logger;
     private readonly IRepositoryBase<User> _userRepository;
+    private readonly IRepositoryBase<Post> _postRepository;
   
-    public  AdminController(ILogger<AdminController> logger, IRepositoryBase<User> userRepository)
+    public  AdminController(
+      ILogger<AdminController> logger,
+      IRepositoryBase<User> userRepository,
+      IRepositoryBase<Post> postRepository
+    )
     {
       _logger = logger;
       _userRepository = userRepository;
+      _postRepository = postRepository;
     }
 
     public IActionResult Index()
@@ -51,5 +57,35 @@ namespace Blog.Controllers
 
       return RedirectToAction("Index", "Home");
     }
+
+    public async Task<IActionResult> NewPost()
+    {
+      await Task.Yield();
+      return View();
+    }
+
+    public async Task<IActionResult> SavePost(PostViewModel model)
+    {
+      var id = Guid.NewGuid();
+      var imageToByte = ConvertToBytes(model.Image);
+      var newPost = new Post(id, model.Title, model.Resume, model.Content, imageToByte);
+
+      await _postRepository.AddAsync(newPost);
+
+      return RedirectToAction("NewPost", "Admin");
+    }
+
+    private byte[] ConvertToBytes(IFormFile image)
+        {
+            if (image == null)
+                return null;
+
+            using (var inputStream = image.OpenReadStream())
+            using (var stream = new MemoryStream())
+            {
+                inputStream.CopyTo(stream);
+                return stream.ToArray();
+            }
+        }
   }
 }

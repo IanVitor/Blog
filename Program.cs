@@ -16,6 +16,7 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
 
 builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IPostRepository, PostRepository>();
 
 var app = builder.Build();
 

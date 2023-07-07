@@ -5,9 +5,9 @@ using Blog.Repository.Interfaces;
 
 namespace Blog.Repository
 {
-  public class UserRepository : RepositoryBase<User>, IUserRepository
+  public class PostRepository : RepositoryBase<Post>, IPostRepository
   {
-    public UserRepository(BlogDbContext context) : base(context)
+    public PostRepository(BlogDbContext context) : base(context)
     {
     }
   }
