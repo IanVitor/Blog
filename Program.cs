@@ -1,4 +1,7 @@
 using Blog.Context;
+using Blog.Repository;
+using Blog.Repository.Base;
+using Blog.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +13,9 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("BlogDb"));
 });
+
+builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

@@ -25,7 +25,7 @@ namespace Blog.Repository.Base
       await Context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<TEntity>> GetAll() =>
+    public async Task<IList<TEntity>> GetAll() =>
       await DbSet.ToListAsync();
 
     public async Task<TEntity> GetPerId(Guid id) =>
