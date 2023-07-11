@@ -75,6 +75,35 @@ namespace Blog.Controllers
       return RedirectToAction("NewPost", "Admin");
     }
 
+    public async Task<IActionResult> AllPosts()
+    {
+      var allPosts = await _postRepository.GetAll();
+      return View(allPosts);
+    }
+
+    public async Task<IActionResult> UpdatePost(string id, string title, string resume, string content, IFormFile image)
+    {
+      var convertId = Guid.Parse(id);
+      var imageToByte = ConvertToBytes(image);
+      var getPosts = await _postRepository.GetAll();
+      var post = getPosts.Where(p => p.Id == convertId).FirstOrDefault();
+
+      post.Title = title;
+      post.Resume = resume;
+      post.Content = content;
+      if(imageToByte != null)
+        post.Image = imageToByte;
+
+      await _postRepository.UpdateAsync(post);
+      return RedirectToAction("AllPosts");
+    }
+
+    public async Task<IActionResult> DeletePost(PostViewModel post)
+    {
+      await _postRepository.Remove(post.Id);
+      return RedirectToAction(nameof(AllPosts));
+    }
+
     private byte[] ConvertToBytes(IFormFile image)
         {
             if (image == null)
